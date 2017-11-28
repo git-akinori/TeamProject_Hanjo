@@ -1,0 +1,16 @@
+Assets/
+Library/
+ProjectSettings/
+Temp/
+TeamProject.sln
+Hanjo.sln
+Hanjo.csproj
+.vs/Hanjo/v15/sqlite3/db.lock
+.vs/Hanjo/v15/Server/sqlite3/db.lock
+.vs/Hanjo/v15/Browse.VC.db
+.collabignore
+TeamProject.Editor.csproj
+.vs/Hanjo/v15/sqlite3/storage.ide
+.vs/Hanjo/v15/Server/sqlite3/storage.ide
+.editorconfig
+TeamProject.csproj
