@@ -5,19 +5,33 @@ using UnityEngine;
 public class HPController : MonoBehaviour{
 
     [SerializeField]
-    private const int maxHp = 500;
+    private int maxHp = 500;
     private static int hp;
 
     [SerializeField]
     bool log = false;
+
+	[SerializeField]
+	GameObject gameover;
+
+	bool displayed;
 
     private void Start()
     {
         hp = maxHp;
     }
 
-    // _damage で hp を減算
-    public void DamageCalc(int _damage)
+	private void Update()
+	{
+		if(hp <= 0 && displayed == false)
+		{
+			displayed = true;
+			PreLoad.EndGame.DisplayEndGame(EndGame.eEndGame.LOSE);
+		}
+	}
+
+	// _damage で hp を減算
+	public void DamageCalc(int _damage)
     {
         hp -= _damage;
         if (hp < 0) hp = 0;

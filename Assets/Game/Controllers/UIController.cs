@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour {
-
-    [SerializeField]
+	
     private GameObject _camera;
     private Vector3 cameraVecUp, cameraVecFor;
     private float radian;
@@ -50,7 +49,8 @@ public class UIController : MonoBehaviour {
 
     void Start() {
         radian = 0f;
-        // Mainカメラの upベクトル と forwardベクトル を格納
+		// Mainカメラの upベクトル と forwardベクトル を格納
+		_camera = Camera.main.gameObject;
         cameraVecUp = _camera.transform.up;
         cameraVecFor = _camera.transform.forward;
 
