@@ -62,7 +62,7 @@ public class Arrow : MonoBehaviour
 
 		// 音声再生オブジェクト生成
 		_bulletSE.GetComponent<AudioSource>().clip = fireSE;
-		bulletSE = Instantiate(_bulletSE, PreLoad.WeaponsDealer.transform);
+		bulletSE = Instantiate(_bulletSE, PreLoad.SoundController.transform);
 	}
 
 	void FixedUpdate()
@@ -102,6 +102,7 @@ public class Arrow : MonoBehaviour
 			// エフェクト生成
 			Instantiate(effect, transform.position, effect.transform.rotation, PreLoad.WeaponsDealer.transform);
 
+			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();
 			var other_sr = other.GetComponent<SpriteRenderer>();
 			this_sr.sortingOrder = other_sr.sortingOrder;

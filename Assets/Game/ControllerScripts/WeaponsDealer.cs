@@ -5,14 +5,22 @@ using UnityEngine.UI;
 
 public class WeaponsDealer : MonoBehaviour
 {
-
 	[SerializeField]
 	private GameObject _arrow = null;
 	[SerializeField]
 	private GameObject _stone = null;
-	//[SerializeField]
-	//private GameObject _oil = null;
+	[SerializeField]
+	private GameObject _oil = null;
 	private GameObject obj;
+
+	[SerializeField]
+	GameObject wall_N;
+	[SerializeField]
+	GameObject wall_E;
+	[SerializeField]
+	GameObject wall_S;
+	[SerializeField]
+	GameObject wall_W;
 
 	[SerializeField]
 	private Image _arrowFilled = null;
@@ -27,7 +35,6 @@ public class WeaponsDealer : MonoBehaviour
 	private float _setStoneCT = 2f;
 	[SerializeField]
 	private float _setOilCT = 10f;
-
 
 	private Vector2 touchBeganPos = Vector2.zero;
 	//private Vector2 touchEndedPos = Vector2.zero;
@@ -226,7 +233,10 @@ public class WeaponsDealer : MonoBehaviour
 		if (weapons[2].ElapsedTime >= weapons[2].CoolTime)
 		{
 			weapons[2].ElapsedTime = 0;
-			//Instantiate(_oil, new Vector2(_oil.transform.position.x, wallLine), Quaternion.identity);
+			Instantiate(_oil, wall_N.transform);
+			Instantiate(_oil, wall_E.transform);
+			Instantiate(_oil, wall_S.transform);
+			Instantiate(_oil, wall_W.transform);
 		}
 	}
 }

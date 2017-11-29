@@ -62,7 +62,7 @@ public class Stone : MonoBehaviour
 
 		// 音声再生オブジェクト生成
 		_bulletSE.GetComponent<AudioSource>().clip = fireSE;
-		bulletSE = Instantiate(_bulletSE, PreLoad.WeaponsDealer.transform);
+		bulletSE = Instantiate(_bulletSE, PreLoad.SoundController.transform);
 	}
 
 	void FixedUpdate()
@@ -90,14 +90,14 @@ public class Stone : MonoBehaviour
 	private void OnTriggerEnter(Collider other)
 	{
 		// ヒット音再生
-		bulletSE.GetComponent<AudioSource>().clip = hitSE;
-		bulletSE.GetComponent<AudioSource>().Play();
+		bulletSE.GetComponent<AudioSource>().PlayOneShot(hitSE);
 
 		if (other.tag == "Enemy")
 		{
 			// エフェクト生成
 			Destroy(Instantiate(effect, transform.position * 0.2f + other.transform.position * 0.8f, effect.transform.rotation, PreLoad.WeaponsDealer.transform), 1);
 
+			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();
 			var other_sr = other.GetComponent<SpriteRenderer>();
 			this_sr.sortingOrder = other_sr.sortingOrder;
