@@ -26,7 +26,7 @@ public class HPController : MonoBehaviour{
 		if(hp <= 0 && displayed == false)
 		{
 			displayed = true;
-			PreLoad.EndGame.DisplayEndGame(EndGame.eEndGame.LOSE);
+			PreLoad.Scripts.EndGame.DisplayEndGame(EndGame.eEndGame.LOSE);
 		}
 	}
 

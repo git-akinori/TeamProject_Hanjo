@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PreLoad : MonoBehaviour
 {
+	private static PreLoad preLoad;
+
 	[SerializeField]
 	private GameObject uiController;
 	[SerializeField]
@@ -17,16 +19,24 @@ public class PreLoad : MonoBehaviour
 	private GameObject soundController;
 
 	[SerializeField]
+	private GameObject cameraCanvas;
+	[SerializeField]
 	private GameObject endGame;
 
-	void Awake()
+	void Start()
 	{
-		Instantiate(uiController, transform);
-		Instantiate(weaponsDealer, transform);
-		Instantiate(enemySpawner, transform);
-		Instantiate(hpController, transform);
-		Instantiate(soundController, transform);
+		preLoad = gameObject.GetComponent<PreLoad>();
+
+		Instantiate(uiController, transform).name = "UIController";
+		Instantiate(weaponsDealer, transform).name = "WeaponsDealer";
+		Instantiate(enemySpawner, transform).name = "EnemySpawner";
+		Instantiate(hpController, transform).name = "HPController";
+		Instantiate(soundController, transform).name = "SoundController";
+
+		Instantiate(endGame, cameraCanvas.transform).name = "EndGame";
 	}
+
+	public static PreLoad Scripts { get { return preLoad; } }
 	
 	public UIController UIController { get { return uiController.GetComponent<UIController>(); } }
 	public WeaponsDealer WeaponsDealer { get { return weaponsDealer.GetComponent<WeaponsDealer>(); } }
@@ -35,9 +45,4 @@ public class PreLoad : MonoBehaviour
 	public SoundController SoundController { get { return soundController.GetComponent<SoundController>(); } }
 
 	public EndGame EndGame { get { return endGame.GetComponent<EndGame>(); } }
-
-	private void Start()
-	{
-		
-	}
 }

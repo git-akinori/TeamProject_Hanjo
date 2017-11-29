@@ -35,10 +35,10 @@ public class Stone : MonoBehaviour
 	void Start()
 	{
 		// 到達点を設定
-		arrivalPos = PreLoad.WeaponsDealer.ArrivalPos;
+		arrivalPos = PreLoad.Scripts.WeaponsDealer.ArrivalPos;
 
 		// 初期位置と向きを設定
-		var pos = PreLoad.UIController.CameraForVec * 100;
+		var pos = PreLoad.Scripts.UIController.CameraForVec * 100;
 		_offsetY += Camera.main.transform.position.y;
 
 		transform.position = (Mathf.Abs(pos.x) > Mathf.Abs(pos.z))
@@ -49,7 +49,7 @@ public class Stone : MonoBehaviour
 		transform.Rotate(new Vector3(90, 0, 180));
 
 		// ターゲット生成
-		var hit = PreLoad.WeaponsDealer.ArrivalPosRayHit;
+		var hit = PreLoad.Scripts.WeaponsDealer.ArrivalPosRayHit;
 		_target = Instantiate(target, hit.point, target.transform.rotation, hit.transform);
 		_target.transform.parent = hit.transform;
 		_target.transform.LookAt(new Vector3(0, _target.transform.position.y, 0));
@@ -62,7 +62,7 @@ public class Stone : MonoBehaviour
 
 		// 音声再生オブジェクト生成
 		_bulletSE.GetComponent<AudioSource>().clip = fireSE;
-		bulletSE = Instantiate(_bulletSE, PreLoad.SoundController.transform);
+		bulletSE = Instantiate(_bulletSE, PreLoad.Scripts.SoundController.transform);
 	}
 
 	void FixedUpdate()
@@ -95,7 +95,7 @@ public class Stone : MonoBehaviour
 		if (other.tag == "Enemy")
 		{
 			// エフェクト生成
-			Destroy(Instantiate(effect, transform.position * 0.2f + other.transform.position * 0.8f, effect.transform.rotation, PreLoad.WeaponsDealer.transform), 1);
+			Destroy(Instantiate(effect, transform.position * 0.2f + other.transform.position * 0.8f, effect.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform), 1);
 
 			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();

@@ -35,10 +35,10 @@ public class Arrow : MonoBehaviour
 	void Start()
 	{
 		// 到達点を設定
-		arrivalPos = PreLoad.WeaponsDealer.ArrivalPos;
+		arrivalPos = PreLoad.Scripts.WeaponsDealer.ArrivalPos;
 
 		// 初期位置と向きを設定
-		var pos = PreLoad.UIController.CameraForVec * 100;
+		var pos = PreLoad.Scripts.UIController.CameraForVec * 100;
 		_offsetY += Camera.main.transform.position.y;
 
 		transform.position = (Mathf.Abs(pos.x) > Mathf.Abs(pos.z))
@@ -50,7 +50,7 @@ public class Arrow : MonoBehaviour
 		transform.Rotate(rotate);
 
 		// ターゲット生成
-		var hit = PreLoad.WeaponsDealer.ArrivalPosRayHit;
+		var hit = PreLoad.Scripts.WeaponsDealer.ArrivalPosRayHit;
 		target = Instantiate(_target, hit.point, _target.transform.rotation, hit.transform);
 		target.transform.parent = hit.transform;
 		target.transform.LookAt(new Vector3(0, target.transform.position.y, 0));
@@ -62,7 +62,7 @@ public class Arrow : MonoBehaviour
 
 		// 音声再生オブジェクト生成
 		_bulletSE.GetComponent<AudioSource>().clip = fireSE;
-		bulletSE = Instantiate(_bulletSE, PreLoad.SoundController.transform);
+		bulletSE = Instantiate(_bulletSE, PreLoad.Scripts.SoundController.transform);
 	}
 
 	void FixedUpdate()
@@ -100,7 +100,7 @@ public class Arrow : MonoBehaviour
 			bulletSE.GetComponent<AudioSource>().PlayOneShot(hitSE);
 
 			// エフェクト生成
-			Instantiate(effect, transform.position, effect.transform.rotation, PreLoad.WeaponsDealer.transform);
+			Instantiate(effect, transform.position, effect.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform);
 
 			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();

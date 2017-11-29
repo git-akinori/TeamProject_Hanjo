@@ -29,11 +29,11 @@ public class HPWarning : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (PreLoad.HPController.HpRatio < halfLine)
+        if (PreLoad.Scripts.HPController.HpRatio < halfLine)
         {
             if (image.enabled == false) image.enabled = true;
 
-            if (PreLoad.HPController.HpRatio < dyingLine && image.sprite != red)
+            if (PreLoad.Scripts.HPController.HpRatio < dyingLine && image.sprite != red)
             {
                 elapsedTime = 0;
                 image.sprite = red;
