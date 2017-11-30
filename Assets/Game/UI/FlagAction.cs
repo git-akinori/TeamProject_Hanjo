@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -128,7 +128,6 @@ public class FlagAction : MonoBehaviour
 
     void FixedUpdate()
     {
-
         for (int i = 0; i < 3; ++i)
         {
             // 旗に対応する方角の敵数を取得

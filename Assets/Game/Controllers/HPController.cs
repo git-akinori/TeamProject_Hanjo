@@ -11,9 +11,6 @@ public class HPController : MonoBehaviour{
     [SerializeField]
     bool log = false;
 
-	[SerializeField]
-	GameObject gameover;
-
 	bool displayed;
 
     private void Start()
@@ -33,7 +30,7 @@ public class HPController : MonoBehaviour{
 	// _damage で hp を減算
 	public void DamageCalc(int _damage)
     {
-        hp -= _damage;
+        if(hp > 0) hp -= _damage;
         if (hp < 0) hp = 0;
         if(log) Debug.Log(hp);
     }

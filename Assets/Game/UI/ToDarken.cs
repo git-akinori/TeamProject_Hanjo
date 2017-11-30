@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,12 +40,12 @@ public class ToDarken : MonoBehaviour
 
     // 位置の初期化
     // dir カメラの移動方向
-    public void InitPos(UIController.CameraMoveDir dir)
+    public void InitPos(UIController.ECameraMoveDir dir)
     {
         Vector3 pos;
 
-        if (dir == UIController.CameraMoveDir.LEFT) pos = new Vector3(offset_x, 0, offset_z);
-        else if (dir == UIController.CameraMoveDir.RIGHT) pos = new Vector3(-offset_x, 0, offset_z);
+        if (dir == UIController.ECameraMoveDir.LEFT) pos = new Vector3(offset_x, 0, offset_z);
+        else if (dir == UIController.ECameraMoveDir.RIGHT) pos = new Vector3(-offset_x, 0, offset_z);
         else return;
 
         transform.localPosition = new Vector3(-pos.x * 0.6f, pos.y, pos.z);

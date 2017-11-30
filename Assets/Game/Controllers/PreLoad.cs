@@ -19,21 +19,15 @@ public class PreLoad : MonoBehaviour
 	private GameObject soundController;
 
 	[SerializeField]
-	private GameObject cameraCanvas;
+	private GameObject special;
 	[SerializeField]
 	private GameObject endGame;
+	[SerializeField]
+	private GameObject stage;
 
 	void Start()
 	{
 		preLoad = gameObject.GetComponent<PreLoad>();
-
-		Instantiate(uiController, transform).name = "UIController";
-		Instantiate(weaponsDealer, transform).name = "WeaponsDealer";
-		Instantiate(enemySpawner, transform).name = "EnemySpawner";
-		Instantiate(hpController, transform).name = "HPController";
-		Instantiate(soundController, transform).name = "SoundController";
-
-		Instantiate(endGame, cameraCanvas.transform).name = "EndGame";
 	}
 
 	public static PreLoad Scripts { get { return preLoad; } }
@@ -44,5 +38,7 @@ public class PreLoad : MonoBehaviour
 	public HPController HPController { get { return hpController.GetComponent<HPController>(); } }
 	public SoundController SoundController { get { return soundController.GetComponent<SoundController>(); } }
 
+	public Special Special { get { return special.GetComponent<Special>(); } }
 	public EndGame EndGame { get { return endGame.GetComponent<EndGame>(); } }
+	public SetStage SetStage { get { return stage.GetComponent<SetStage>(); } }
 }

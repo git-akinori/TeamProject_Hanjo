@@ -50,6 +50,9 @@ public class WeaponsDealer : MonoBehaviour
 
 	[SerializeField]
 	float timeScale = 0.05f;
+	
+	float elapsedTime = 0f;
+	bool isPressing = false;
 
     [SerializeField]
     private Animator _animator;
@@ -70,18 +73,17 @@ public class WeaponsDealer : MonoBehaviour
 		// 仮置き
 		if (Input.GetButtonDown("Fire2"))
 		{
-			if (Time.timeScale == 1.0F)
+			if (Time.timeScale == 1.0f)
 			{
-				Debug.Log("pause! Right Click");
+				Debug.Log("slow! Right Click");
 				Time.timeScale = timeScale;
 			}
 			else
-				Time.timeScale = 1.0F;
-			Time.fixedDeltaTime = 0.02F * Time.timeScale;
+				Time.timeScale = 1.0f;
+			Time.fixedDeltaTime = 0.02f * Time.timeScale;
 		}
-
-		if (Time.timeScale == 1.0f)
-		{
+		
+		if(Time.timeScale == 1.0f){
 			foreach (var weapon in weapons)
 			{
 				weapon.Update();
@@ -99,55 +101,68 @@ public class WeaponsDealer : MonoBehaviour
 			if (AppUtil.GetTouchInfo() == TouchInfo.Moved)
 			{
 				touchPosDiff = (Vector2)touchPos - touchBeganPos;
-			}
 
+				elapsedTime += Time.deltaTime;
+				
+				isPressing = true;
+			}
 
 			if (AppUtil.GetTouchInfo() == TouchInfo.Ended)
 			{
-				Ray ray = Camera.main.ScreenPointToRay(touchPos);
-				RaycastHit[] hits = Physics.RaycastAll(ray);
-				foreach (var hit in hits)
+				CheckFireIsAvailable(touchPos);
+				isPressing = false;
+			}
+
+			if (isPressing)
+			{
+				var special = PreLoad.Scripts.Special;
+				if (special.IsOnSpecial == true && elapsedTime > special.FireInterval)
 				{
-					if (hit.collider.tag == "Wall")
-					{
-						Debug.Log("Wall");
-						break;
-					}
-					if (touchPosDiff.magnitude < 30 && hit.collider.tag == "Stage")
-					{
-						//Debug.Log(hit.point);
-						// 弾の生成
-						var _obj = GenerateBullet();
-
-                        _animator.SetBool(_isAttack, true);
-                        _isAttackTime = 0;
-
-						if (_obj != null)
-						{
-							raycastHit = hit;
-							arrivalPos = hit.point;
-						}
-
-						break;
-					}
+					touchPosDiff = Vector2.zero;
+					CheckFireIsAvailable(AppUtil.GetTouchPosition());
+					isPressing = false;
+					elapsedTime = 0;
 				}
 			}
 
-            _isAttackTime += Time.deltaTime;
+			_isAttackTime += Time.deltaTime;
 
             if (_isAttackTime > 3)
                 _animator.SetBool(_isAttack, false);
 		}
 	}
 
-	public Vector3 ArrivalPos
+	public void CheckFireIsAvailable(Vector3 _touch_pos)
 	{
-		get { return arrivalPos; }
-	}
+		Ray ray = Camera.main.ScreenPointToRay(_touch_pos);
+		RaycastHit[] hits = Physics.RaycastAll(ray);
+		foreach (var hit in hits)
+		{
+			if (PreLoad.Scripts.HPController.HpRatio <= 0) break;
 
-	public RaycastHit ArrivalPosRayHit
-	{
-		get { return raycastHit;  }
+			if (hit.collider.tag == "Wall")
+			{
+				Debug.Log("Wall");
+				break;
+			}
+			if (touchPosDiff.magnitude < 30 && hit.collider.tag == "Stage")
+			{
+				//Debug.Log(hit.point);
+				// 弾の生成
+				var _obj = GenerateBullet();
+
+				_animator.SetBool(_isAttack, true);
+				_isAttackTime = 0;
+
+				if (_obj != null)
+				{
+					raycastHit = hit;
+					arrivalPos = hit.point;
+				}
+
+				break;
+			}
+		}
 	}
 
 	public GameObject GenerateBullet()
@@ -172,6 +187,16 @@ public class WeaponsDealer : MonoBehaviour
 			}
 		}
 		return null;
+	}
+
+	public Vector3 ArrivalPos
+	{
+		get { return arrivalPos; }
+	}
+
+	public RaycastHit ArrivalPosRayHit
+	{
+		get { return raycastHit;  }
 	}
 
 	class CoolTimeManager

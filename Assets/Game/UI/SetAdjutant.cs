@@ -14,8 +14,8 @@ public class SetAdjutant : MonoBehaviour
 		GameObject obj = null;
 		//Debug.Log(select_manager.GetEChara);
 
-		if (select_manager.GetEChara == select_manager.EChara.boy) obj = male;
-		if (select_manager.GetEChara == select_manager.EChara.girl) obj = female;
+		if (select_manager.GetEChara == EChara.boy) obj = male;
+		if (select_manager.GetEChara == EChara.girl) obj = female;
 
 		if (obj != null)
 		{

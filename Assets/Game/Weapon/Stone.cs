@@ -95,12 +95,12 @@ public class Stone : MonoBehaviour
 		if (other.tag == "Enemy")
 		{
 			// エフェクト生成
-			Destroy(Instantiate(effect, transform.position * 0.2f + other.transform.position * 0.8f, effect.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform), 1);
+			Destroy(Instantiate(effect, transform.position * 0.2f + other.transform.position * 0.8f, other.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform), 1);
 
 			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();
 			var other_sr = other.GetComponent<SpriteRenderer>();
-			this_sr.sortingOrder = other_sr.sortingOrder;
+			this_sr.sortingOrder = other_sr.sortingOrder + 1;
 		}
 	}
 }

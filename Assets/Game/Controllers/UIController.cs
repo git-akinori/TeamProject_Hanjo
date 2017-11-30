@@ -35,7 +35,7 @@ public class UIController : MonoBehaviour {
     [SerializeField]
     private FlagAction flagAction;
 
-    public enum CameraMoveDir
+    public enum ECameraMoveDir
     {
         LEFT = 0,
         RIGHT = 1,
@@ -103,54 +103,60 @@ public class UIController : MonoBehaviour {
                 touchBeganPos = Vector2.zero;
                 touchPosDiff = Vector2.zero;
 
-                if (direction != CameraMoveDir.NONE)
-                {
-                    // 左なら90度左回転し、番号を下げる
-                    // 右なら90度右回転し、番号を上げる
-                    if (direction == CameraMoveDir.LEFT)
-                    {
-                        radian -= Mathf.PI / 2;
-                        --activeNum;
-                    }
-                    else if (direction == CameraMoveDir.RIGHT)
-                    {
-                        radian += Mathf.PI / 2;
-                        ++activeNum;
-                    }
-
-                    // Mainカメラの upベクトル と forwardベクトル を再設定
-                    _camera.transform.up = new Vector3(Mathf.Sin(radian) * cameraVecUp.z, cameraVecUp.y, Mathf.Cos(radian) * cameraVecUp.z);
-                    _camera.transform.forward = new Vector3(Mathf.Sin(radian) * cameraVecFor.z, cameraVecFor.y, Mathf.Cos(radian) * cameraVecFor.z);
-
-                    // 値が 0~3 で循環するように
-                    if (activeNum < 0) activeNum = 3;
-                    if (activeNum > 3) activeNum = 0;
-
-                    // 現在の玉を非表示にし、次の玉を表示する
-                    activeBall.SetActive(false);
-                    activeBall = ballArray[activeNum];
-                    activeBall.SetActive(true);
-
-                    flagAction.ResetFlags((Dir)activeNum);
-
-                    // 画面切り替え時の暗転処理
-                    toDarken.InitPos(direction);
-                }
+				TurnCamera(direction);
             }
         }
     }
 
+	// カメラの向き変更処理
+	private void TurnCamera(ECameraMoveDir _direction)
+	{
+		if (_direction != ECameraMoveDir.NONE)
+		{
+			// 左なら90度左回転し、番号を下げる
+			// 右なら90度右回転し、番号を上げる
+			if (_direction == ECameraMoveDir.LEFT)
+			{
+				radian -= Mathf.PI / 2;
+				--activeNum;
+			}
+			else if (_direction == ECameraMoveDir.RIGHT)
+			{
+				radian += Mathf.PI / 2;
+				++activeNum;
+			}
+
+			// Mainカメラの upベクトル と forwardベクトル を再設定
+			_camera.transform.up = new Vector3(Mathf.Sin(radian) * cameraVecUp.z, cameraVecUp.y, Mathf.Cos(radian) * cameraVecUp.z);
+			_camera.transform.forward = new Vector3(Mathf.Sin(radian) * cameraVecFor.z, cameraVecFor.y, Mathf.Cos(radian) * cameraVecFor.z);
+
+			// 値が 0~3 で循環するように
+			if (activeNum < 0) activeNum = 3;
+			if (activeNum > 3) activeNum = 0;
+
+			// 現在の玉を非表示にし、次の玉を表示する
+			activeBall.SetActive(false);
+			activeBall = ballArray[activeNum];
+			activeBall.SetActive(true);
+
+			flagAction.ResetFlags((Dir)activeNum);
+
+			// 画面切り替え時の暗転処理
+			toDarken.InitPos(_direction);
+		}
+	}
+
     // カメラ動かす方向を取得
     // _touchDiff
-    private CameraMoveDir GetDirection(Vector2 _touchDiff)
+    private ECameraMoveDir GetDirection(Vector2 _touchDiff)
     {
         // 指を動かした方向が縦より横の方が大きい時
         if (Mathf.Abs(_touchDiff.y) < Mathf.Abs(_touchDiff.x)) {
             // 横方向の値から 移動方向を決定
-            if (_touchDiff.x > _minFlickDist) return CameraMoveDir.LEFT;
-            else if (_touchDiff.x < -_minFlickDist) return CameraMoveDir.RIGHT;
+            if (_touchDiff.x > _minFlickDist) return ECameraMoveDir.LEFT;
+            else if (_touchDiff.x < -_minFlickDist) return ECameraMoveDir.RIGHT;
         }
-        return CameraMoveDir.NONE;
+        return ECameraMoveDir.NONE;
     }
 
     // 現在向いている方向を判断する値を取得する
@@ -159,4 +165,13 @@ public class UIController : MonoBehaviour {
 
     // Mainカメラの forwardベクトル を取得する
     public Vector3 CameraForVec { get { return _camera.transform.forward; } }
+
+	public void ToLeft()
+	{
+		TurnCamera(ECameraMoveDir.LEFT);
+	}
+	public void ToRight()
+	{
+		TurnCamera(ECameraMoveDir.RIGHT);
+	}
 }

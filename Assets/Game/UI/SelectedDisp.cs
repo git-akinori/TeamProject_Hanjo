@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,31 +20,20 @@ public class SelectedDisp : MonoBehaviour
     [SerializeField]
     private Vector3 stone_offset = Vector3.zero;
 
-    private Vector3 arrow_pos = Vector3.zero;
-    private Vector3 stone_pos = Vector3.zero;
+	private void Start()
+	{
+		transform.position = arrowIcon.transform.position + arrow_offset;
+	}
 
-    void Start()
-    {
-        arrow_pos = arrowIcon.transform.position + arrow_offset;
-        stone_pos = stoneIcon.transform.position + stone_offset;
-
-        transform.position = arrow_pos;
-    }
-
-    void Update()
-    {
-
-    }
-
-    public void SelectedIcon(Weapon weapon)
+	public void SelectedIcon(Weapon weapon)
     {
         if (weapon == Weapon.ARROW)
         {
-            transform.position = arrow_pos;
+            transform.position = arrowIcon.transform.position + arrow_offset;
         }
         else if (weapon == Weapon.STONE)
         {
-            transform.position = stone_pos;
+            transform.position = stoneIcon.transform.position + stone_offset;
         }
         else return;
     }

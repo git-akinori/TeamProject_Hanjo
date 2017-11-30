@@ -100,7 +100,7 @@ public class Arrow : MonoBehaviour
 			bulletSE.GetComponent<AudioSource>().PlayOneShot(hitSE);
 
 			// エフェクト生成
-			Instantiate(effect, transform.position, effect.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform);
+			Instantiate(effect, transform.position, other.transform.rotation, PreLoad.Scripts.WeaponsDealer.transform);
 
 			// ソート
 			var this_sr = GetComponent<SpriteRenderer>();
