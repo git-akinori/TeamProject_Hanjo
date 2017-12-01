@@ -16,7 +16,7 @@ public class Oil : MonoBehaviour
 
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
 		if (transform.localScale.y < 2.0f)
 		{

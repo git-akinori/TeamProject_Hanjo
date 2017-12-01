@@ -30,6 +30,8 @@ public class Arrow : MonoBehaviour
 	[SerializeField]
 	AudioClip fireSE;
 	[SerializeField]
+	AudioClip fireSE_sepecial;
+	[SerializeField]
 	AudioClip hitSE;
 
 	void Start()
@@ -62,7 +64,9 @@ public class Arrow : MonoBehaviour
 
 		// 音声再生オブジェクト生成
 		_bulletSE.GetComponent<AudioSource>().clip = fireSE;
+
 		bulletSE = Instantiate(_bulletSE, PreLoad.Scripts.SoundController.transform);
+
 	}
 
 	void FixedUpdate()

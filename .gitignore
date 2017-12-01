@@ -33,3 +33,5 @@ Assets/Game/Enemy/TowerMove.cs
 Assets/StageSelect/Scripts/Chara_Button.cs
 Assets/Game/Enemy/EnemyArrow.cs
 Assets/StageSelect/Scripts/hukukann.cs
+Assets/Game/Rain.cs
+Assets/Game/UI/tutorial.cs

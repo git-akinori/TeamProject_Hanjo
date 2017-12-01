@@ -22,8 +22,6 @@ public class PreLoad : MonoBehaviour
 	private GameObject special;
 	[SerializeField]
 	private GameObject endGame;
-	[SerializeField]
-	private GameObject stage;
 
 	void Start()
 	{
@@ -40,5 +38,4 @@ public class PreLoad : MonoBehaviour
 
 	public Special Special { get { return special.GetComponent<Special>(); } }
 	public EndGame EndGame { get { return endGame.GetComponent<EndGame>(); } }
-	public SetStage SetStage { get { return stage.GetComponent<SetStage>(); } }
 }

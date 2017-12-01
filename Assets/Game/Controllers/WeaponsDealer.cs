@@ -54,18 +54,20 @@ public class WeaponsDealer : MonoBehaviour
 	float elapsedTime = 0f;
 	bool isPressing = false;
 
-    [SerializeField]
-    private Animator _animator;
-    private readonly int _isAttack = Animator.StringToHash("isAttack");
-    private float _isAttackTime;
+	[SerializeField]
+	GameObject soujin;
+	private Animator soujin_animator;
+	private readonly int _isAttack = Animator.StringToHash("isAttack");
+	private float _isAttackTime;
 
 	void Start()
 	{
 		obj = _arrow;
-
 		weapons[0] = new CoolTimeManager(_arrowFilled, _setArrowCT);
 		weapons[1] = new CoolTimeManager(_stoneFilled, _setStoneCT);
 		weapons[2] = new CoolTimeManager(_oilFilled, _setOilCT);
+
+		soujin_animator = soujin.GetComponent<Animator>();
 	}
 
 	private void Update()
@@ -122,13 +124,14 @@ public class WeaponsDealer : MonoBehaviour
 					CheckFireIsAvailable(AppUtil.GetTouchPosition());
 					isPressing = false;
 					elapsedTime = 0;
+					weapons[0].ElapsedTime = weapons[0].CoolTime;
 				}
 			}
 
 			_isAttackTime += Time.deltaTime;
 
             if (_isAttackTime > 3)
-                _animator.SetBool(_isAttack, false);
+                soujin_animator.SetBool(_isAttack, false);
 		}
 	}
 
@@ -151,7 +154,7 @@ public class WeaponsDealer : MonoBehaviour
 				// 弾の生成
 				var _obj = GenerateBullet();
 
-				_animator.SetBool(_isAttack, true);
+				soujin_animator.SetBool(_isAttack, true);
 				_isAttackTime = 0;
 
 				if (_obj != null)

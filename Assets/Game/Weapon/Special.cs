@@ -14,11 +14,23 @@ public class Special : MonoBehaviour
 	SpriteRenderer sr;
 	[SerializeField]
 	float score;
+	[SerializeField]
+	float incSpeed = 0.1f;
+	[SerializeField]
+	float decSpeed = 0.5f;
+
 
 	[SerializeField]
 	float fireInterval = 0.1f;
 
 	bool isOnSpecial;
+
+
+	[SerializeField]
+	GameObject adjutant;
+	private Animator adjutant_animator;
+	private readonly int _isSpecial = Animator.StringToHash("special");
+	private readonly int _isAttack = Animator.StringToHash("attack");
 
 	void Start()
 	{
@@ -26,32 +38,38 @@ public class Special : MonoBehaviour
 		sr = GetComponent<SpriteRenderer>();
 		sr.color = new Color(1, 1, 1);
 		glow.SetActive(false);
+		
+		adjutant_animator = adjutant.transform.GetChild(0).GetComponent<Animator>();
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
 		if (!isOnSpecial)
 		{
 			if (score < max_score)
 			{
-				score += 0.1f;
+				score += incSpeed;
 			}
 			else
 			{
 				sr.color = new Color(1, 1, 100f / 255f);
 				glow.SetActive(true);
+				adjutant_animator.SetBool(_isSpecial, true);
 			}
 		}
 		else
 		{
 			PreLoad.Scripts.WeaponsDealer.TapArrow();
-			score -= 1f;
+
+			score -= decSpeed;
 
 			if (score < 0)
 			{
 				isOnSpecial = false;
 				sr.color = new Color(1, 1, 1);
 				glow.SetActive(false);
+				
+				adjutant_animator.SetBool(_isSpecial, false);
 			}
 		}
 	}
@@ -64,7 +82,11 @@ public class Special : MonoBehaviour
 	public void TurnOnSpecial()
 	{
 		if (score >= max_score)
+		{
 			isOnSpecial = true;
+
+			adjutant_animator.SetBool(_isAttack, true);
+		}
 	}
 
 	public bool IsOnSpecial { get { return isOnSpecial; } }

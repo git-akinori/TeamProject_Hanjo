@@ -46,69 +46,23 @@ public class SetStage : MonoBehaviour
 	Sprite west;
 
 	[SerializeField]
-	bool debug = false;
+	bool onDebug = false;
 	[SerializeField]
 	EChapter debug_chapter = EChapter.chapter_one;
 
-	// soldier_limit_st1	: (3, no limit) no limit is sepecial number 0 
-	// tower_limit_st1		: (8, 2)
-	// roller_limit_st1		: (30, 1)
-	SpawnLimitEachEnemy st1_limit
-		= new SpawnLimitEachEnemy(
-			new SpawnLimit(3, 0),
-			new SpawnLimit(8, 2),
-			new SpawnLimit(30, 1));
-
-	// soldier_limit_st2	: (3, no limit)
-	// tower_limit_st2		: (8, 2)
-	// roller_limit_st2		: (30, 1)
-	SpawnLimitEachEnemy st2_limit
-		= new SpawnLimitEachEnemy(
-			new SpawnLimit(3, 0),
-			new SpawnLimit(8, 2),
-			new SpawnLimit(30, 1));
-
-	// soldier_limit_st3	: (3, no limit)
-	// tower_limit_st3		: (8, 2)
-	// roller_limit_st3		: (15, 1)
-	SpawnLimitEachEnemy st3_limit
-		= new SpawnLimitEachEnemy(
-			new SpawnLimit(3, 0),
-			new SpawnLimit(8, 2),
-			new SpawnLimit(15, 1));
-
-	SpawnLimitEachEnemy spawn_limit_each_enemy;
-
-	[SerializeField]
-	Vector2 soldier_spawn_limit;
-	[SerializeField]
-	Vector2 tower_spawn_limit;
-	[SerializeField]
-	Vector2 roller_spawn_limit;
-
-	void Awake()
+	void Start()
 	{
 		var chapter = select_manager.GetEChapter;
 
-		// for debug
-		if (debug)
-		{
-			chapter = debug_chapter;
-		}
-		
-		spawn_limit_each_enemy = new SpawnLimitEachEnemy(
-			new SpawnLimit(soldier_spawn_limit.x, (int)soldier_spawn_limit.y),
-			new SpawnLimit(tower_spawn_limit.x, (int)tower_spawn_limit.y),
-			new SpawnLimit(roller_spawn_limit.x, (int)roller_spawn_limit.y));
-
-		if (chapter == EChapter.chapter_one)
+#if UNITY_EDITOR
+		if (onDebug) chapter = debug_chapter;
+#endif
+		if (chapter == EChapter.chapter_one || chapter == EChapter.none)
 		{
 			north = st1_north;
 			east = st1_east;
 			south = st1_south;
 			west = st1_west;
-
-			spawn_limit_each_enemy = st1_limit;
 		}
 		if (chapter == EChapter.chapter_two)
 		{
@@ -116,28 +70,51 @@ public class SetStage : MonoBehaviour
 			east = st2_east;
 			south = st2_south;
 			west = st2_west;
-
-			spawn_limit_each_enemy = st2_limit;
 		}
-		if (chapter == EChapter.chapter_three)
+		else if (chapter == EChapter.chapter_three)
 		{
 			north = st3_north;
 			east = st3_east;
 			south = st3_south;
 			west = st3_west;
-
-			spawn_limit_each_enemy = st3_limit;
 		}
 
 		northObj.GetComponent<SpriteRenderer>().sprite = north;
 		eastObj.GetComponent<SpriteRenderer>().sprite = east;
 		southObj.GetComponent<SpriteRenderer>().sprite = south;
 		westObj.GetComponent<SpriteRenderer>().sprite = west;
+	}
+}
 
-		Debug.Log(spawn_limit_each_enemy.Soldier.SpawnTime + " " + spawn_limit_each_enemy.Soldier.MaxSpawnNum);
-		Debug.Log(spawn_limit_each_enemy.Tower.SpawnTime + " " + spawn_limit_each_enemy.Tower.MaxSpawnNum);
-		Debug.Log(spawn_limit_each_enemy.Roller.SpawnTime + " " + spawn_limit_each_enemy.Roller.MaxSpawnNum);
+public struct SpawnLimit
+{
+	float spawn_time;    // spawn_time (second)
+	int max_spawn_num;   // max_spawn_num
+
+	public SpawnLimit(float _spawn_time, int _max_spawn_num)
+	{
+		spawn_time = _spawn_time;
+		max_spawn_num = _max_spawn_num;
 	}
 
-	public SpawnLimitEachEnemy SpawnLimitEachEnemy { get { return spawn_limit_each_enemy; } }
+	public float SpawnTime { get { return spawn_time; } }
+	public int MaxSpawnNum { get { return max_spawn_num; } }
+}
+
+public struct SpawnLimits
+{
+	SpawnLimit soldier;
+	SpawnLimit tower;
+	SpawnLimit roller;
+
+	public SpawnLimits(SpawnLimit _soldier, SpawnLimit _tower, SpawnLimit _roller)
+	{
+		soldier = _soldier;
+		tower = _tower;
+		roller = _roller;
+	}
+
+	public SpawnLimit Soldier { get { return soldier; } }
+	public SpawnLimit Tower { get { return tower; } }
+	public SpawnLimit Roller { get { return roller; } }
 }

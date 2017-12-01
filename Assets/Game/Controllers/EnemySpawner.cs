@@ -11,58 +11,6 @@ public enum Dir
 	WEST = 3
 };
 
-struct SpawnEnemyParam
-{
-	GameObject enemyObj; // enemy object
-	Vector3 offset_pos;  // (x, y, z)
-	Vector2 spawn_range; // (width, depth)
-
-	public SpawnEnemyParam(GameObject _enemyObj, Vector3 _offset_pos, Vector2 _spawn_range)
-	{
-		enemyObj = _enemyObj;
-		offset_pos = _offset_pos;
-		spawn_range = _spawn_range;
-	}
-
-	public GameObject EnemyObj { get { return enemyObj; } }
-	public Vector3 OffsetPos { get { return offset_pos; } }
-	public float Width { get { return spawn_range.x; } }
-	public float Depth { get { return spawn_range.y; } }
-}
-
-public struct SpawnLimit
-{
-	float spawn_time;    // spawn_time (second)
-	int max_spawn_num;   // max_spawn_num
-
-	public SpawnLimit(float _spawn_time, int _max_spawn_num)
-	{
-		spawn_time = _spawn_time;
-		max_spawn_num = _max_spawn_num;
-	}
-
-	public float SpawnTime { get { return spawn_time; } }
-	public int MaxSpawnNum { get { return max_spawn_num; } }
-}
-
-public struct SpawnLimitEachEnemy
-{
-	SpawnLimit soldier;
-	SpawnLimit tower;
-	SpawnLimit roller;
-
-	public SpawnLimitEachEnemy(SpawnLimit _soldier, SpawnLimit _tower, SpawnLimit _roller)
-	{
-		soldier = _soldier;
-		tower = _tower;
-		roller = _roller;
-	}
-
-	public SpawnLimit Soldier { get { return soldier; } }
-	public SpawnLimit Tower { get { return tower; } }
-	public SpawnLimit Roller { get { return roller; } }
-}
-
 public class EnemySpawner : MonoBehaviour
 {
 	// 暫定値
@@ -108,13 +56,20 @@ public class EnemySpawner : MonoBehaviour
 	// obj			: boss
 	// offset_pos	: (0, -88, 800)
 	// spawn_range	: (0, 0)
-	[SerializeField]
 	GameObject boss_obj;
+	[SerializeField]
+	GameObject boss1_obj;
+	[SerializeField]
+	GameObject boss2_obj;
+	[SerializeField]
+	GameObject boss3_obj;
 	[SerializeField]
 	Vector3 boss_offset_pos = new Vector3(0, -88, 800);
 	[SerializeField]
 	Vector2 boss_spawn_range = new Vector2(0, 0);
-	
+	[SerializeField]
+	float boss_spawn_time = 60f;
+
 	private EnemySpawnSystem[] enemySpawnSystems = new EnemySpawnSystem[3];
 	private EnemySpawnSystem bossSpawnSystem = null;
 
@@ -127,13 +82,54 @@ public class EnemySpawner : MonoBehaviour
 	private int base_turn_dir_time = 10;
 	private int turn_dir_time;
 
-	// for debug
 	[SerializeField]
-	private bool northOnly = true;
+	bool onDebug = false;
 	[SerializeField]
-	private EEnemy eEnemy = EEnemy.NONE;
+	EChapter debug_chapter = EChapter.chapter_one;
 
-	private Vector3 camera_pos;
+	// soldier_limit_st1	: (1, no limit) no limit is 100 
+	// tower_limit_st1		: (8, 2)
+	// roller_limit_st1		: (30, 1)
+	SpawnLimits st1_limit
+		= new SpawnLimits(
+			new SpawnLimit(1, 100),
+			new SpawnLimit(8, 2),
+			new SpawnLimit(30, 1));
+
+	// soldier_limit_st2	: (1, no limit)
+	// tower_limit_st2		: (8, 2)
+	// roller_limit_st2		: (30, 1)
+	SpawnLimits st2_limit
+		= new SpawnLimits(
+			new SpawnLimit(1, 100),
+			new SpawnLimit(8, 2),
+			new SpawnLimit(30, 1));
+
+	// soldier_limit_st3	: (1, no limit)
+	// tower_limit_st3		: (8, 2)
+	// roller_limit_st3		: (15, 1)
+	SpawnLimits st3_limit
+		= new SpawnLimits(
+			new SpawnLimit(1, 100),
+			new SpawnLimit(8, 2),
+			new SpawnLimit(15, 1));
+
+	SpawnLimits spawnLimits;
+
+	[SerializeField]
+	float soldier_SpawnTime;
+	[SerializeField]
+	int soldier_MaxNum;
+	[SerializeField]
+	float tower_SpawnTime;
+	[SerializeField]
+	int tower_MaxNum;
+	[SerializeField]
+	float roller_SpawnTime;
+	[SerializeField]
+	int roller_MaxNum;
+
+	EChapter chapter;
 
 	public enum EEnemy
 	{
@@ -146,26 +142,70 @@ public class EnemySpawner : MonoBehaviour
 
 	void Start()
 	{
-		camera_pos = Camera.main.transform.position;
+		chapter = select_manager.GetEChapter;
 
-		var eChapter = select_manager.GetEChapter;
-		
-		enemySpawnSystems[(int)EEnemy.SOLDIER] = new EnemySpawnSystem(soldier_obj, soldier_offset_pos, soldier_spawn_range, soldier_spawn_time, soldier_max_num);
-		enemySpawnSystems[(int)EEnemy.TOWER] = new EnemySpawnSystem(tower_obj, tower_offset_pos, tower_spawn_range, tower_spawn_time, tower_max_num);
-		enemySpawnSystems[(int)EEnemy.ROLLER] = new EnemySpawnSystem(roller_obj, roller_offset_pos, roller_spawn_range, roller_spawn_time, roller_max_num);
+#if UNITY_EDITOR
+		// for debug
+		if (onDebug)
+		{
+			chapter = debug_chapter;
+		}
+#endif
+		// none is for debug
+		if (chapter == EChapter.none)
+		{
+			spawnLimits = new SpawnLimits(
+				new SpawnLimit(soldier_SpawnTime, soldier_MaxNum),
+				new SpawnLimit(tower_SpawnTime, tower_MaxNum),
+				new SpawnLimit(roller_SpawnTime, roller_MaxNum));
+			boss_obj = boss1_obj;
+		}
+		else if (chapter == EChapter.chapter_one)
+		{
+			spawnLimits = st1_limit;
+			boss_obj = boss1_obj;
+		}
+		else if (chapter == EChapter.chapter_two)
+		{
+			spawnLimits = st2_limit;
+			boss_obj = boss2_obj;
+		}
+		else if (chapter == EChapter.chapter_three)
+		{
+			spawnLimits = st3_limit;
+			boss_obj = boss3_obj;
+		}
+
+		enemySpawnSystems[(int)EEnemy.SOLDIER] = new EnemySpawnSystem(soldier_obj, soldier_offset_pos, soldier_spawn_range, spawnLimits.Soldier);
+		enemySpawnSystems[(int)EEnemy.TOWER] = new EnemySpawnSystem(tower_obj, tower_offset_pos, tower_spawn_range, spawnLimits.Tower);
+		enemySpawnSystems[(int)EEnemy.ROLLER] = new EnemySpawnSystem(roller_obj, roller_offset_pos, roller_spawn_range, spawnLimits.Roller);
+
+		//enemySpawnSystems[(int)EEnemy.SOLDIER] = new EnemySpawnSystem(soldier_obj, soldier_offset_pos, soldier_spawn_range, soldier_spawn_time, soldier_max_num);
+		//enemySpawnSystems[(int)EEnemy.TOWER] = new EnemySpawnSystem(tower_obj, tower_offset_pos, tower_spawn_range, tower_spawn_time, tower_max_num);
+		//enemySpawnSystems[(int)EEnemy.ROLLER] = new EnemySpawnSystem(roller_obj, roller_offset_pos, roller_spawn_range, roller_spawn_time, roller_max_num);
 
 		bossSpawnSystem = new EnemySpawnSystem(boss_obj, boss_offset_pos, boss_spawn_range);
 
 		turn_dir_time = base_turn_dir_time;
 	}
 
+	[SerializeField]
+	bool spawnBoss = false;
+
 	void FixedUpdate()
 	{
 		timeElapsed += Time.deltaTime;
 
+		if (spawnBoss)
+		{
+			bossSpawnSystem.CreateEnemy();
+			spawnBoss = false;
+			isSpawning = false;
+		}
+
 		if (isSpawning)
 		{
-			if (timeElapsed < 120)
+			if (timeElapsed < boss_spawn_time)
 			{
 				var te = (int)timeElapsed;
 
@@ -179,6 +219,7 @@ public class EnemySpawner : MonoBehaviour
 						while (dir == cur_dir || dir == (Dir)(((int)cur_dir + 2) % 4))
 							dir = (Dir)Random.Range(0, 4);
 
+						if (chapter == EChapter.chapter_one && dir == Dir.NORTH) dir = Dir.SOUTH;
 						EnemySpawnSystem.Direction = dir;
 
 						Debug.Log("changed spawning direction!" + ((int)EnemySpawnSystem.Direction).ToString());
@@ -215,7 +256,6 @@ public class EnemySpawner : MonoBehaviour
 
 		float elapsedTime = 0;
 
-		bool isHaveScript = false;
 		int spawningNum = 0;
 
 		static Dir direction = Dir.NORTH;
@@ -239,6 +279,17 @@ public class EnemySpawner : MonoBehaviour
 			spawn_time = _spawn_time;
 			max_spawn_num = _max_spawn_num;
 		}
+
+		public EnemySpawnSystem(GameObject _obj, Vector3 _offset_pos, Vector2 _range, SpawnLimit _spawnLimit)
+		{
+			obj = _obj;
+			offset_pos = _offset_pos;
+			width = _range.x;
+			depth = _range.y;
+			spawn_time = _spawnLimit.SpawnTime;
+			max_spawn_num = _spawnLimit.MaxSpawnNum;
+		}
+
 
 		public void Update()
 		{
@@ -287,4 +338,24 @@ public class EnemySpawner : MonoBehaviour
 	}
 
 	public int SpawnDirection { get { return (int)EnemySpawnSystem.Direction; } }
+}
+
+
+struct SpawnEnemyParam
+{
+	GameObject enemyObj; // enemy object
+	Vector3 offset_pos;  // (x, y, z)
+	Vector2 spawn_range; // (width, depth)
+
+	public SpawnEnemyParam(GameObject _enemyObj, Vector3 _offset_pos, Vector2 _spawn_range)
+	{
+		enemyObj = _enemyObj;
+		offset_pos = _offset_pos;
+		spawn_range = _spawn_range;
+	}
+
+	public GameObject EnemyObj { get { return enemyObj; } }
+	public Vector3 OffsetPos { get { return offset_pos; } }
+	public float Width { get { return spawn_range.x; } }
+	public float Depth { get { return spawn_range.y; } }
 }
